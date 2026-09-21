@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gestor-financeiro-v1';
+const CACHE_NAME = 'gestor-financeiro-v2';
 const ARQUIVOS_CACHE = [
   './',
   './index.html',
