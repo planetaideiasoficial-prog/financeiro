@@ -36,6 +36,7 @@ select:focus,input:focus{border-color:var(--primary-dark)}
 .card.success{border-left-color:var(--success)}
 .card.danger{border-left-color:var(--danger)}
 .card.lucro{border-left-color:var(--info);background:linear-gradient(135deg,#fff,#f0f9ff)}
+  .card.caixa{border-left-color:#8B5CF6;background:linear-gradient(135deg,#fff,#faf5ff)}
 .card h3{font-size:.85rem;color:var(--text-light);text-transform:uppercase;margin-bottom:5px}
 .card .amount{font-size:1.6rem;font-weight:bold}
 .card .amount.sm{font-size:1.2rem}
@@ -167,6 +168,12 @@ select:focus,input:focus{border-color:var(--primary-dark)}
         </div>
       </div>
     </div>
+    <!-- ===== CAIXA DA EMPRESA (independente de filtros) ===== -->
+<div class="card caixa" style="margin-bottom:20px">
+  <h3><i class="fas fa-vault"></i> Caixa da Empresa (Acumulado Total)</h3>
+  <div class="amount" id="caixaEmpresa">R$ 0,00</div>
+  <div class="margem">Valor real disponível — não afetado pelos filtros de período ou unidade</div>
+</div>
 
     <div class="chart-container">
       <h3>Distribuição por Categoria</h3>
@@ -722,6 +729,47 @@ function calcularDivisao(){
 
   return { lucroTotal, entradasPorCat, porSocio, totalEntradas, totalSaidas, temEmpresa: sociosEmpresa.length > 0 };
 }
+  /* ========== CAIXA DA EMPRESA (acumulado total) ========== */
+function calcularCaixaEmpresa(){
+  const todas = dados.transacoes;
+
+  let totalEntradas = 0, totalSaidas = 0;
+  const entradasPorCat = {};
+
+  todas.forEach(t=>{
+    const v = parseFloat(t.valor) || 0;
+    if(t.tipo === 'entrada'){
+      totalEntradas += v;
+      entradasPorCat[t.categoria] = (entradasPorCat[t.categoria] || 0) + v;
+    } else {
+      totalSaidas += v;
+    }
+  });
+
+  const lucroTotal = totalEntradas - totalSaidas;
+
+  // Soma tudo que foi distribuído aos sócios PESSOA FÍSICA
+  let distribuidoPessoa = 0;
+  const sociosPessoa = dados.socios.filter(s => s.tipo !== 'empresa');
+  sociosPessoa.forEach(s=>{
+    Object.entries(entradasPorCat).forEach(([cat, valorEntrada])=>{
+      const pct = parseFloat((s.pctPorCategoria||{})[cat] || 0);
+      distribuidoPessoa += valorEntrada * (pct/100);
+    });
+  });
+
+  return lucroTotal - distribuidoPessoa;
+}
+
+function atualizarCaixaEmpresa(){
+  const caixa = calcularCaixaEmpresa();
+  const el = document.getElementById('caixaEmpresa');
+  if(!el) return;
+
+  el.innerText = fmt(caixa);
+  // Cor: verde se positivo, vermelho se negativo (empresa no prejuízo)
+  el.style.color = caixa >= 0 ? 'var(--primary-dark)' : 'var(--danger)';
+}
 
 /* ========== DASHBOARD ========== */
 function atualizarDashboard(){
@@ -759,8 +807,8 @@ function atualizarDashboard(){
   barChartInst.data.labels=labels;
   barChartInst.data.datasets[0].data=labels.map(l=>agrup[l]);
   barChartInst.update();
-
   renderDivisaoLucro();
+  atualizarCaixaEmpresa();
 }
 
 function renderDivisaoLucro(){
@@ -1314,6 +1362,10 @@ doc.setTextColor(16, 185, 129);         // verde
 doc.text(`Lucro Líquido: R$ ${lucro.toFixed(2)}`, 112, yResumo + 14);
 doc.setTextColor(0,0,0);                // volta ao preto
 doc.text(`Margem: ${margem.toFixed(1)}%`, 112, yResumo + 21);
+  const caixaAtual = calcularCaixaEmpresa();
+doc.setTextColor(caixaAtual >= 0 ? 139 : 220, caixaAtual >= 0 ? 92 : 38, caixaAtual >= 0 ? 246 : 38);
+doc.text(`Caixa da Empresa: R$ ${caixaAtual.toFixed(2)}`, 112, yResumo + 28);
+doc.setTextColor(0,0,0);
   
   // Divisão entre sócios
   let yDivisao = Math.max(32 + alturaPdf + 10, yResumo + 30);
