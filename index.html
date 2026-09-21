@@ -36,7 +36,7 @@ select:focus,input:focus{border-color:var(--primary-dark)}
 .card.success{border-left-color:var(--success)}
 .card.danger{border-left-color:var(--danger)}
 .card.lucro{border-left-color:var(--info);background:linear-gradient(135deg,#fff,#f0f9ff)}
-  .card.caixa{border-left-color:#8B5CF6;background:linear-gradient(135deg,#fff,#faf5ff)}
+.card.caixa{border-left-color:#8B5CF6;background:linear-gradient(135deg,#fff,#faf5ff)}
 .card h3{font-size:.85rem;color:var(--text-light);text-transform:uppercase;margin-bottom:5px}
 .card .amount{font-size:1.6rem;font-weight:bold}
 .card .amount.sm{font-size:1.2rem}
@@ -133,7 +133,6 @@ select:focus,input:focus{border-color:var(--primary-dark)}
 <!-- ========= CONTAINER ========= -->
 <div class="container" id="mainContainer">
 
-  <!-- ====== ABA 1: DASHBOARD ====== -->
   <div id="tab-inicio" class="tab-content active">
     <select id="unidadeFilter">
       <option value="todas">🏢 Visão Global (Todas as Unidades)</option>
@@ -168,12 +167,12 @@ select:focus,input:focus{border-color:var(--primary-dark)}
         </div>
       </div>
     </div>
-    <!-- ===== CAIXA DA EMPRESA (independente de filtros) ===== -->
-<div class="card caixa" style="margin-bottom:20px">
-  <h3><i class="fas fa-vault"></i> Caixa da Empresa (Acumulado Total)</h3>
-  <div class="amount" id="caixaEmpresa">R$ 0,00</div>
-  <div class="margem">Valor real disponível — não afetado pelos filtros de período ou unidade</div>
-</div>
+
+    <div class="card caixa" style="margin-bottom:20px">
+      <h3><i class="fas fa-vault"></i> Caixa da Empresa (Acumulado Total)</h3>
+      <div class="amount" id="caixaEmpresa">R$ 0,00</div>
+      <div class="margem">Valor real disponível — não afetado pelos filtros de período ou unidade</div>
+    </div>
 
     <div class="chart-container">
       <h3>Distribuição por Categoria</h3>
@@ -193,7 +192,6 @@ select:focus,input:focus{border-color:var(--primary-dark)}
     </div>
   </div>
 
-  <!-- ====== ABA 2: LANÇAMENTOS ====== -->
   <div id="tab-lancamentos" class="tab-content">
     <div class="card filtros-lancamentos" style="border-left:none;margin-bottom:15px;padding:15px">
       <h3 style="margin-bottom:10px;color:var(--text-dark);text-transform:none">Filtros de Pesquisa</h3>
@@ -239,7 +237,6 @@ select:focus,input:focus{border-color:var(--primary-dark)}
     <div id="listaTransacoes"></div>
   </div>
 
-  <!-- ====== ABA 3: CLIENTES/FORNECEDORES ====== -->
   <div id="tab-clientes" class="tab-content">
     <button class="btn" style="width:100%;margin-bottom:15px" onclick="abrirModalCliente()">
       <i class="fas fa-user-plus"></i> Novo Cliente / Fornecedor
@@ -267,7 +264,6 @@ select:focus,input:focus{border-color:var(--primary-dark)}
     <div id="listaClientes"></div>
   </div>
 
-  <!-- ====== ABA 4: AJUSTES ====== -->
   <div id="tab-ajustes" class="tab-content">
     <h2 style="margin-bottom:15px">Configurações</h2>
 
@@ -327,7 +323,6 @@ select:focus,input:focus{border-color:var(--primary-dark)}
   </div>
 </div>
 
-<!-- ========= BOTTOM NAV ========= -->
 <nav class="bottom-nav" id="mainNav">
   <a class="nav-item active" data-target="tab-inicio"><i class="fas fa-chart-pie"></i> Início</a>
   <a class="nav-item" data-target="tab-lancamentos"><i class="fas fa-exchange-alt"></i> Lançamentos</a>
@@ -335,7 +330,6 @@ select:focus,input:focus{border-color:var(--primary-dark)}
   <a class="nav-item" data-target="tab-ajustes"><i class="fas fa-cog"></i> Ajustes</a>
 </nav>
 
-<!-- ========= MODAL: TRANSAÇÃO ========= -->
 <div class="modal-overlay" id="transacaoModal">
   <div class="modal">
     <h2 id="modalTitle">Novo Lançamento</h2>
@@ -352,6 +346,17 @@ select:focus,input:focus{border-color:var(--primary-dark)}
 
       <div class="form-group"><label>Valor (R$)</label><input type="number" id="formValor" step="0.01" required placeholder="Ex: 150.00"></div>
       <div class="form-group"><label>Descrição</label><input type="text" id="formObs" placeholder="Detalhe do lançamento"></div>
+
+      <div class="form-group" id="grupoDistribuicao" style="display:none">
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
+          <input type="checkbox" id="formDistribuicaoLucro" style="width:auto;margin:0">
+          <span>É pagamento de sócio (distribuição de lucro)</span>
+        </label>
+        <p style="font-size:.75rem;color:var(--text-light);margin-top:5px">
+          Marque para que essa saída não afete o lucro operacional nem a divisão entre sócios. O valor ainda sai do Caixa.
+        </p>
+      </div>
+
       <div style="display:flex;gap:10px;margin-top:15px">
         <button type="button" class="btn btn-outline" style="flex:1;box-shadow:none" onclick="fecharModais()">Cancelar</button>
         <button type="submit" class="btn" style="flex:1" id="btnSalvarTransacao">Salvar</button>
@@ -360,7 +365,6 @@ select:focus,input:focus{border-color:var(--primary-dark)}
   </div>
 </div>
 
-<!-- ========= MODAL: SÓCIO ========= -->
 <div class="modal-overlay" id="socioModal">
   <div class="modal">
     <h2 id="socioModalTitle">Novo Sócio</h2>
@@ -390,7 +394,6 @@ select:focus,input:focus{border-color:var(--primary-dark)}
   </div>
 </div>
 
-<!-- ========= MODAL: CLIENTE/FORNECEDOR ========= -->
 <div class="modal-overlay" id="clienteModal">
   <div class="modal">
     <h2 id="clienteModalTitle">Novo Cliente / Fornecedor</h2>
@@ -414,9 +417,6 @@ select:focus,input:focus{border-color:var(--primary-dark)}
   </div>
 </div>
 
-<!-- =========================================================
-     SCRIPT — Firebase integrado
-     ========================================================= -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import {
@@ -428,9 +428,6 @@ import {
   onAuthStateChanged, signOut
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-/* ============================================================
-   ✅ Configuração do Firebase já preenchida
-   ============================================================ */
 const firebaseConfig = {
   apiKey: "AIzaSyCw7zCxKvTTe2JBO48tOUeo2MA8YPAe5L0",
   authDomain: "financeiro-planeta.firebaseapp.com",
@@ -446,7 +443,6 @@ const db = initializeFirestore(app, {
 });
 const auth = getAuth(app);
 
-/* ========== ESTADO GLOBAL ========== */
 let usuarioLogado = null;
 let unsubscribeListeners = [];
 
@@ -470,7 +466,6 @@ function obterDataLocalAtual(){
 }
 function catsEntrada(){ return dados.categorias.filter(c=>c.tipo==='entrada').map(c=>c.nome); }
 
-/* ========== CHARTS ========== */
 function initCharts(){
   pieChartInst = new Chart(document.getElementById('pieChart').getContext('2d'), {
     type:'doughnut',
@@ -485,7 +480,6 @@ function initCharts(){
 }
 initCharts();
 
-/* ========== ABAS ========== */
 history.replaceState({tab:'tab-inicio'},'','#tab-inicio');
 window.abrirAba = function(targetId, pushHistory=true){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.getAttribute('data-target')===targetId));
@@ -507,7 +501,6 @@ window.addEventListener('popstate',(e)=>{
   abrirAba(target,false);
 });
 
-/* ========== AUTH ========== */
 let authMode='login';
 window.toggleAuthMode=function(){
   authMode=authMode==='login'?'register':'login';
@@ -572,7 +565,6 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
-/* ========== LISTENERS DO FIRESTORE ========== */
 function iniciarSistemaPrivado(uid){
   const unsubConfig = onSnapshot(doc(db, "configuracoes", uid), (docSnap) => {
     if (docSnap.exists()) {
@@ -640,7 +632,6 @@ function iniciarSistemaPrivado(uid){
   unsubscribeListeners.push(unsubTra);
 }
 
-/* ========== SELECTS / FILTROS ========== */
 function renderUnidades(){
   const opts = dados.unidades.map(u=>`<option value="${u.id}">📍 ${u.nome}</option>`).join('');
   const atualUni = document.getElementById('unidadeFilter').value;
@@ -665,7 +656,6 @@ function renderPessoasFiltro(){
   document.getElementById('filtroLanPessoa').innerHTML = '<option value="todas">Todas as Pessoas</option>'+opts;
 }
 
-/* ========== FILTRAGEM POR TEMPO ========== */
 function filtrarPorTempo(lista){
   const hoje=new Date(); hoje.setHours(0,0,0,0);
   return lista.filter(t=>{
@@ -699,7 +689,8 @@ function calcularDivisao(){
       entradasPorCat[t.categoria] = (entradasPorCat[t.categoria]||0) + v;
       totalEntradas += v;
     } else {
-      totalSaidas += v;
+      // Ignora pagamento de sócios no cálculo do lucro operacional
+      if(!t.distribuicaoLucro) totalSaidas += v;
     }
   });
 
@@ -729,45 +720,22 @@ function calcularDivisao(){
 
   return { lucroTotal, entradasPorCat, porSocio, totalEntradas, totalSaidas, temEmpresa: sociosEmpresa.length > 0 };
 }
-  /* ========== CAIXA DA EMPRESA (acumulado total) ========== */
+
+/* ========== CAIXA DA EMPRESA ========== */
 function calcularCaixaEmpresa(){
-  const todas = dados.transacoes;
-
-  let totalEntradas = 0, totalSaidas = 0;
-  const entradasPorCat = {};
-
-  todas.forEach(t=>{
+  let ent = 0, sai = 0;
+  dados.transacoes.forEach(t=>{
     const v = parseFloat(t.valor) || 0;
-    if(t.tipo === 'entrada'){
-      totalEntradas += v;
-      entradasPorCat[t.categoria] = (entradasPorCat[t.categoria] || 0) + v;
-    } else {
-      totalSaidas += v;
-    }
+    if(t.tipo === 'entrada') ent += v; else sai += v;
   });
-
-  const lucroTotal = totalEntradas - totalSaidas;
-
-  // Soma tudo que foi distribuído aos sócios PESSOA FÍSICA
-  let distribuidoPessoa = 0;
-  const sociosPessoa = dados.socios.filter(s => s.tipo !== 'empresa');
-  sociosPessoa.forEach(s=>{
-    Object.entries(entradasPorCat).forEach(([cat, valorEntrada])=>{
-      const pct = parseFloat((s.pctPorCategoria||{})[cat] || 0);
-      distribuidoPessoa += valorEntrada * (pct/100);
-    });
-  });
-
-  return lucroTotal - distribuidoPessoa;
+  return ent - sai;
 }
 
 function atualizarCaixaEmpresa(){
   const caixa = calcularCaixaEmpresa();
   const el = document.getElementById('caixaEmpresa');
   if(!el) return;
-
   el.innerText = fmt(caixa);
-  // Cor: verde se positivo, vermelho se negativo (empresa no prejuízo)
   el.style.color = caixa >= 0 ? 'var(--primary-dark)' : 'var(--danger)';
 }
 
@@ -913,9 +881,10 @@ function atualizarAbaLancamentos(){
     const cor = t.tipo==='entrada'?'val-entrada':'val-saida';
     const sinal = t.tipo==='entrada'?'+':'-';
     const pessoaStr = t.entidade_id ? `<span class="tag-pessoa">${mapaCli[t.entidade_id]||''}</span>` : '';
+    const tagDist = t.distribuicaoLucro ? ' <span class="tag-pessoa" style="background:#fef3c7;color:#92400e">Distribuição</span>' : '';
     html += `<div class="list-item">
       <div class="info" style="flex:1">
-        <h4>${t.categoria} <span class="tag-unidade">${mapaUni[t.unidade_id]||''}</span></h4>
+        <h4>${t.categoria} <span class="tag-unidade">${mapaUni[t.unidade_id]||''}</span>${tagDist}</h4>
         <p>${dataF} ${pessoaStr} ${t.obs?'• '+t.obs:''}</p>
       </div>
       <div style="text-align:right">
@@ -940,13 +909,14 @@ window.excluirTransacao=async function(id){
   }
 };
 
-/* ========== MODAL TRANSAÇÃO ========== */
 window.abrirModalTransacao=function(tipo){
   if(dados.unidades.length===0) return alert('Cadastre pelo menos uma Unidade em Ajustes primeiro.');
   history.pushState({modal:true},'','#modal');
   document.getElementById('transacaoModal').style.display='flex';
   document.getElementById('formTipo').value=tipo;
   document.getElementById('modalTitle').innerText = tipo==='entrada'?'Nova Entrada':'Nova Saída';
+  document.getElementById('grupoDistribuicao').style.display = (tipo === 'saida') ? 'block' : 'none';
+  document.getElementById('formDistribuicaoLucro').checked = false;
   document.getElementById('formData').value = obterDataLocalAtual();
 
   const cats = dados.categorias.filter(c=>c.tipo===tipo);
@@ -980,6 +950,7 @@ document.getElementById('formTransacao').addEventListener('submit', async (e)=>{
     obs:document.getElementById('formObs').value,
     data:document.getElementById('formData').value,
     entidade_id:document.getElementById('formEntidade').value,
+    distribuicaoLucro: document.getElementById('formDistribuicaoLucro').checked,
     uid: usuarioLogado.uid
   };
 
@@ -993,7 +964,6 @@ document.getElementById('formTransacao').addEventListener('submit', async (e)=>{
   }
 });
 
-/* ========== CLIENTES ========== */
 function renderClientes(){
   const fTipo = document.getElementById('filtroCliTipo').value;
   let lista = dados.clientes;
@@ -1075,7 +1045,6 @@ document.getElementById('formCliente').addEventListener('submit', async (e)=>{
   }
 });
 
-/* ========== SÓCIOS ========== */
 window.abrirModalSocio=function(){
   if(catsEntrada().length===0){
     return alert('Cadastre pelo menos uma categoria de ENTRADA antes de criar sócios.');
@@ -1191,7 +1160,6 @@ window.excluirSocio=async function(id){
   }
 };
 
-/* ========== AJUSTES ========== */
 function renderAjustes(){
   document.getElementById('listaUnidadesAjustes').innerHTML = dados.unidades.map(u=>`
     <div class="list-item" style="padding:10px;margin-bottom:5px;box-shadow:none;border:1px solid #eee">
@@ -1281,7 +1249,6 @@ document.getElementById('formAjustes').addEventListener('submit', async (e)=>{
   finally { btn.innerText='Salvar Cabeçalho'; btn.disabled=false; }
 });
 
-/* ========== MODAIS ========== */
 window.fecharModais=function(){
   ['transacaoModal','socioModal','clienteModal'].forEach(id=>document.getElementById(id).style.display='none');
   document.getElementById('formTransacao').reset();
@@ -1304,7 +1271,6 @@ window.gerarPDFTransacoes = function(){
     ? 'Todas as unidades'
     : (dados.unidades.find(u => u.id === filtroUni)?.nome || '');
 
-  // Cabeçalho
   doc.setFontSize(16);
   doc.setFont(undefined, 'bold');
   doc.text(nomeEmpresa, 14, 20);
@@ -1312,7 +1278,6 @@ window.gerarPDFTransacoes = function(){
   doc.setFont(undefined, 'normal');
   doc.text(`${periodoLabel} • ${uniLabel} • Gerado em ${new Date().toLocaleDateString('pt-BR')}`, 14, 26);
 
-  // Resumo
   const lista = dadosPeriodo();
   let ent = 0, sai = 0;
   const mapa = {};
@@ -1324,7 +1289,6 @@ window.gerarPDFTransacoes = function(){
   const lucro = ent - sai;
   const margem = ent > 0 ? (lucro / ent * 100) : 0;
 
-  // Gráfico de pizza
   const canvasPie = document.getElementById('pieChart');
   const imgPie = canvasPie.toDataURL('image/png', 1.0);
   const proporcao = canvasPie.width / canvasPie.height;
@@ -1332,7 +1296,6 @@ window.gerarPDFTransacoes = function(){
   const alturaPdf = larguraPdf / proporcao;
   doc.addImage(imgPie, 'PNG', 14, 32, larguraPdf, alturaPdf);
 
-  // Legenda ao lado do gráfico
   const keysPdf = Object.keys(mapa);
   const valuesPdf = Object.values(mapa);
   let yLegenda = 38;
@@ -1351,24 +1314,24 @@ window.gerarPDFTransacoes = function(){
     yLegenda += 6;
   });
 
-  // Resumo numérico
   let yResumo = Math.max(yLegenda + 6, 60);
-doc.setFontSize(11);
-doc.setFont(undefined,'bold');
-doc.text(`Total Entradas: R$ ${ent.toFixed(2)}`, 112, yResumo);
-doc.setTextColor(220, 38, 38);          // vermelho
-doc.text(`Total Saídas: R$ ${sai.toFixed(2)}`, 112, yResumo + 7);
-doc.setTextColor(16, 185, 129);         // verde
-doc.text(`Lucro Líquido: R$ ${lucro.toFixed(2)}`, 112, yResumo + 14);
-doc.setTextColor(0,0,0);                // volta ao preto
-doc.text(`Margem: ${margem.toFixed(1)}%`, 112, yResumo + 21);
+  doc.setFontSize(11);
+  doc.setFont(undefined,'bold');
+  doc.text(`Total Entradas: R$ ${ent.toFixed(2)}`, 112, yResumo);
+  doc.setTextColor(220, 38, 38);
+  doc.text(`Total Saídas: R$ ${sai.toFixed(2)}`, 112, yResumo + 7);
+  doc.setTextColor(16, 185, 129);
+  doc.text(`Lucro Líquido: R$ ${lucro.toFixed(2)}`, 112, yResumo + 14);
+  doc.setTextColor(0,0,0);
+  doc.text(`Margem: ${margem.toFixed(1)}%`, 112, yResumo + 21);
+
   const caixaAtual = calcularCaixaEmpresa();
-doc.setTextColor(caixaAtual >= 0 ? 139 : 220, caixaAtual >= 0 ? 92 : 38, caixaAtual >= 0 ? 246 : 38);
-doc.text(`Caixa da Empresa: R$ ${caixaAtual.toFixed(2)}`, 112, yResumo + 28);
-doc.setTextColor(0,0,0);
-  
-  // Divisão entre sócios
-  let yDivisao = Math.max(32 + alturaPdf + 10, yResumo + 30);
+  const caixaR = caixaAtual >= 0 ? [139, 92, 246] : [220, 38, 38];
+  doc.setTextColor(caixaR[0], caixaR[1], caixaR[2]);
+  doc.text(`Caixa da Empresa: R$ ${caixaAtual.toFixed(2)}`, 112, yResumo + 28);
+  doc.setTextColor(0,0,0);
+
+  let yDivisao = Math.max(32 + alturaPdf + 10, yResumo + 40);
   if(yDivisao > 250){ doc.addPage(); yDivisao = 20; }
 
   if(dados.socios.length > 0){
@@ -1403,7 +1366,6 @@ doc.setTextColor(0,0,0);
       if(yDivisao > 275){ doc.addPage(); yDivisao = 20; }
     });
 
-    // Total
     doc.setDrawColor(200);
     doc.line(14, yDivisao, 190, yDivisao);
     yDivisao += 5;
@@ -1413,7 +1375,6 @@ doc.setTextColor(0,0,0);
     yDivisao += 12;
   }
 
-  // Tabela de lançamentos
   const mapaUni = Object.fromEntries(dados.unidades.map(u=>[u.id, u.nome]));
   const mapaCli = Object.fromEntries(dados.clientes.map(c=>[c.id, c.nome]));
 
@@ -1437,26 +1398,24 @@ doc.setTextColor(0,0,0);
   doc.setFont(undefined,'bold');
   doc.text("Lançamentos do Período", 14, yDivisao);
 
-doc.autoTable({
-  startY: yDivisao + 5,
-  head: [['Data', 'Categoria', 'Descrição', 'Cliente/Forn.', 'Unidade', 'Valor']],
-  body: corpoTabela,
-  theme: 'striped',
-  headStyles: { fillColor: [16, 185, 129] },
-  styles: { fontSize: 8 },
-  columnStyles: { 5: { halign: 'right' } },
-  didParseCell: function(data){
-    // Se for linha do corpo e o valor começar com "-", é saída → pinta de vermelho
-    if (data.section === 'body') {
-      const celulaValor = data.row.cells[5];
-      if (celulaValor && celulaValor.text[0] && celulaValor.text[0].startsWith('-')) {
-        data.cell.styles.textColor = [220, 38, 38];
+  doc.autoTable({
+    startY: yDivisao + 5,
+    head: [['Data', 'Categoria', 'Descrição', 'Cliente/Forn.', 'Unidade', 'Valor']],
+    body: corpoTabela,
+    theme: 'striped',
+    headStyles: { fillColor: [16, 185, 129] },
+    styles: { fontSize: 8 },
+    columnStyles: { 5: { halign: 'right' } },
+    didParseCell: function(data){
+      if (data.section === 'body') {
+        const celulaValor = data.row.cells[5];
+        if (celulaValor && celulaValor.text[0] && celulaValor.text[0].startsWith('-')) {
+          data.cell.styles.textColor = [220, 38, 38];
+        }
       }
     }
-  }
-});
+  });
 
-  // Assinatura
   let finalY = doc.lastAutoTable.finalY || yDivisao;
   if(finalY > 260){ doc.addPage(); finalY = 20; }
   doc.setLineWidth(0.5);
@@ -1486,7 +1445,6 @@ window.gerarPDFClientes = function(){
   if(filtroTipo !== 'todos') lista = lista.filter(c=>c.tipo === filtroTipo);
   lista.sort((a,b)=>a.nome.localeCompare(b.nome));
 
-  // Cabeçalho
   doc.setFontSize(16);
   doc.setFont(undefined,'bold');
   doc.text(nomeEmpresa, 14, 20);
@@ -1521,7 +1479,6 @@ window.gerarPDFClientes = function(){
   doc.save(`Lista_Clientes_${dataArquivo}.pdf`);
 };
 
-/* ========== PWA ========== */
 let deferredPrompt;
 window.addEventListener('beforeinstallprompt',e=>{
   e.preventDefault(); deferredPrompt=e;
