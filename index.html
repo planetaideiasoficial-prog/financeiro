@@ -1305,15 +1305,16 @@ window.gerarPDFTransacoes = function(){
 
   // Resumo numérico
   let yResumo = Math.max(yLegenda + 6, 60);
-  doc.setFontSize(11);
-  doc.setFont(undefined,'bold');
-  doc.text(`Total Entradas: R$ ${ent.toFixed(2)}`, 112, yResumo);
-  doc.text(`Total Saídas: R$ ${sai.toFixed(2)}`, 112, yResumo + 7);
-  doc.setTextColor(16, 185, 129);
-  doc.text(`Lucro Líquido: R$ ${lucro.toFixed(2)}`, 112, yResumo + 14);
-  doc.setTextColor(0,0,0);
-  doc.text(`Margem: ${margem.toFixed(1)}%`, 112, yResumo + 21);
-
+doc.setFontSize(11);
+doc.setFont(undefined,'bold');
+doc.text(`Total Entradas: R$ ${ent.toFixed(2)}`, 112, yResumo);
+doc.setTextColor(220, 38, 38);          // vermelho
+doc.text(`Total Saídas: R$ ${sai.toFixed(2)}`, 112, yResumo + 7);
+doc.setTextColor(16, 185, 129);         // verde
+doc.text(`Lucro Líquido: R$ ${lucro.toFixed(2)}`, 112, yResumo + 14);
+doc.setTextColor(0,0,0);                // volta ao preto
+doc.text(`Margem: ${margem.toFixed(1)}%`, 112, yResumo + 21);
+  
   // Divisão entre sócios
   let yDivisao = Math.max(32 + alturaPdf + 10, yResumo + 30);
   if(yDivisao > 250){ doc.addPage(); yDivisao = 20; }
@@ -1384,15 +1385,24 @@ window.gerarPDFTransacoes = function(){
   doc.setFont(undefined,'bold');
   doc.text("Lançamentos do Período", 14, yDivisao);
 
-  doc.autoTable({
-    startY: yDivisao + 5,
-    head: [['Data', 'Categoria', 'Descrição', 'Cliente/Forn.', 'Unidade', 'Valor']],
-    body: corpoTabela,
-    theme: 'striped',
-    headStyles: { fillColor: [16, 185, 129] },
-    styles: { fontSize: 8 },
-    columnStyles: { 5: { halign: 'right' } }
-  });
+doc.autoTable({
+  startY: yDivisao + 5,
+  head: [['Data', 'Categoria', 'Descrição', 'Cliente/Forn.', 'Unidade', 'Valor']],
+  body: corpoTabela,
+  theme: 'striped',
+  headStyles: { fillColor: [16, 185, 129] },
+  styles: { fontSize: 8 },
+  columnStyles: { 5: { halign: 'right' } },
+  didParseCell: function(data){
+    // Se for linha do corpo e o valor começar com "-", é saída → pinta de vermelho
+    if (data.section === 'body') {
+      const celulaValor = data.row.cells[5];
+      if (celulaValor && celulaValor.text[0] && celulaValor.text[0].startsWith('-')) {
+        data.cell.styles.textColor = [220, 38, 38];
+      }
+    }
+  }
+});
 
   // Assinatura
   let finalY = doc.lastAutoTable.finalY || yDivisao;
