@@ -151,6 +151,25 @@ select:focus,input:focus{border-color:var(--primary-dark)}
       <button class="time-btn active" onclick="mudarTempo('mes', this)">Mês</button>
       <button class="time-btn" onclick="mudarTempo('ano', this)">Ano</button>
     </div>
+    <!-- ===== FILTRO PERSONALIZADO DE DATA ===== -->
+<div class="card filtros-lancamentos" style="border-left:none;margin-bottom:15px;padding:15px">
+  <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end">
+    <div>
+      <label style="display:block;font-size:.75rem;font-weight:bold;color:var(--text-light);margin-bottom:5px">Data Início</label>
+      <input type="date" id="filtroDataInicio" style="margin-bottom:0;padding:10px;font-size:.9rem">
+    </div>
+    <div>
+      <label style="display:block;font-size:.75rem;font-weight:bold;color:var(--text-light);margin-bottom:5px">Data Fim</label>
+      <input type="date" id="filtroDataFim" style="margin-bottom:0;padding:10px;font-size:.9rem">
+    </div>
+    <button class="btn btn-outline" onclick="limparFiltroData()" style="padding:10px 14px;box-shadow:none">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <p style="font-size:.72rem;color:var(--text-light);margin-top:8px">
+    <i class="fas fa-info-circle"></i> Preencha para filtrar um período específico. Deixe vazio para usar os botões Semana/Mês/Ano.
+  </p>
+</div>
 
     <div class="summary-cards">
       <div class="card lucro">
@@ -659,6 +678,19 @@ function renderPessoasFiltro(){
 }
 
 function filtrarPorTempo(lista){
+  const dataIni = document.getElementById('filtroDataInicio').value;
+  const dataFim = document.getElementById('filtroDataFim').value;
+
+  // Se o usuário preencheu alguma data customizada, usa ela
+  if(dataIni || dataFim){
+    return lista.filter(t=>{
+      if(dataIni && t.data < dataIni) return false;
+      if(dataFim && t.data > dataFim) return false;
+      return true;
+    });
+  }
+
+  // Senão, usa o preset (semana/mes/ano)
   const hoje=new Date(); hoje.setHours(0,0,0,0);
   return lista.filter(t=>{
     const d=new Date(t.data+'T00:00:00');
@@ -833,9 +865,22 @@ window.mudarTempo=function(p,el){
   filtroTempoGlobal=p;
   document.querySelectorAll('.time-btn').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
+  // Ao escolher um preset, limpa as datas personalizadas
+  document.getElementById('filtroDataInicio').value = '';
+  document.getElementById('filtroDataFim').value = '';
   atualizarDashboard();
 };
-document.getElementById('unidadeFilter').addEventListener('change', atualizarDashboard);
+
+window.limparFiltroData=function(){
+  document.getElementById('filtroDataInicio').value = '';
+  document.getElementById('filtroDataFim').value = '';
+  atualizarDashboard();
+};
+
+// Listeners dos inputs de data
+['filtroDataInicio','filtroDataFim'].forEach(id=>{
+  document.getElementById(id).addEventListener('change', atualizarDashboard);
+});
 
 /* ========== LANÇAMENTOS ========== */
 function atualizarAbaLancamentos(){
@@ -1265,9 +1310,18 @@ window.gerarPDFTransacoes = function(){
   const doc = new jsPDF();
 
   const nomeEmpresa = dados.config.nomeEmpresa || 'Gestor Financeiro';
-  const periodoLabel = filtroTempoGlobal === 'semana' ? 'Última semana'
-                     : filtroTempoGlobal === 'mes'    ? 'Mês atual'
-                     : 'Ano atual';
+const dataIni = document.getElementById('filtroDataInicio').value;
+const dataFim = document.getElementById('filtroDataFim').value;
+let periodoLabel;
+if(dataIni || dataFim){
+  const dIni = dataIni ? new Date(dataIni+'T00:00:00').toLocaleDateString('pt-BR') : 'início';
+  const dFim = dataFim ? new Date(dataFim+'T00:00:00').toLocaleDateString('pt-BR') : 'hoje';
+  periodoLabel = `${dIni} até ${dFim}`;
+} else {
+  periodoLabel = filtroTempoGlobal === 'semana' ? 'Última semana'
+               : filtroTempoGlobal === 'mes'    ? 'Mês atual'
+               : 'Ano atual';
+}
   const filtroUni = document.getElementById('unidadeFilter').value;
   const uniLabel = filtroUni === 'todas'
     ? 'Todas as unidades'
